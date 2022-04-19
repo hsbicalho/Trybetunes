@@ -17,9 +17,12 @@ class App extends React.Component {
       loginButtonDisabled: true,
       logged: false,
       loading: true,
+      searchButtonDisabled: true,
+      artist: '',
     };
     this.onLoginChange = this.onLoginChange.bind(this);
     this.onButtonClick = this.onButtonClick.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
   }
 
   onLoginChange = ({ target: { value } }) => {
@@ -37,6 +40,21 @@ class App extends React.Component {
     }
   }
 
+  onSearchChange = ({ target: { value } }) => {
+    const MIN_CHARCTERS = 2;
+    if (value.length >= MIN_CHARCTERS) {
+      this.setState({
+        searchButtonDisabled: false,
+        artist: value,
+      });
+    } else {
+      this.setState({
+        searchButtonDisabled: true,
+        artist: value,
+      });
+    }
+  }
+
   async onButtonClick() {
     this.setState({
       logged: true,
@@ -50,7 +68,15 @@ class App extends React.Component {
   }
 
   render() {
-    const { username, loginButtonDisabled, logged, loading } = this.state;
+    const {
+      username,
+      loginButtonDisabled,
+      logged,
+      loading,
+      searchButtonDisabled,
+      artist,
+    } = this.state;
+
     return (
       <div>
         <main>
@@ -70,7 +96,13 @@ class App extends React.Component {
 
             <Route exact path="/search">
               {loading
-                ? <Search />
+                ? (
+                  <Search
+                    buttonDisabled={ searchButtonDisabled }
+                    artistToBeSearched={ artist }
+                    onInputChange={ this.onSearchChange }
+                  />
+                )
                 : <span>Carregando...</span>}
             </Route>
             <Route exact path="/album/:id" render={ () => <Album /> } />
