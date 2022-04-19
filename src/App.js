@@ -42,7 +42,8 @@ class App extends React.Component {
       logged: true,
       loading: false,
     });
-    await createUser({ name: this.state.username })
+    const { username } = this.state;
+    await createUser({ name: username });
     this.setState({
       loading: true,
     });
@@ -54,23 +55,23 @@ class App extends React.Component {
       <div>
         <main>
           <Switch>
-            <Route exact path="/" >
-            {logged
+            <Route exact path="/">
+              {logged
                 ? <Redirect to="/search" />
                 : (
-              <Login
-              username={ username }
-              buttonDisabled={ loginButtonDisabled }
-              onLoginChange={this.onLoginChange}
-              buttonClick={this.onButtonClick}
-              />
-              )}
+                  <Login
+                    username={ username }
+                    buttonDisabled={ loginButtonDisabled }
+                    onLoginChange={ this.onLoginChange }
+                    buttonClick={ this.onButtonClick }
+                  />
+                )}
             </Route>
 
             <Route exact path="/search">
-            {loading
-            ? <Search />
-            : <span>Carregando...</span>}
+              {loading
+                ? <Search />
+                : <span>Carregando...</span>}
             </Route>
             <Route exact path="/album/:id" render={ () => <Album /> } />
             <Route exact path="/favorites" component={ Favorites } />
