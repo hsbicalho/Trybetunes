@@ -1,45 +1,63 @@
 import React, { Component } from 'react';
-import propTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
+import { createUser } from '../services/userAPI';
 
-export default class Login extends Component {
+class Login extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      userLogged: false,
+      loading: false,
+      name: '',
+    };
+  }
+
+  handleChange = ({ target: { value } }) => {
+    this.setState({ name: value });
+  }
+
+  signIn = () => {
+    const { name } = this.state;
+    this.setState({ loading: true });
+    createUser({ name })
+      .then(() => this.setState({ userLogged: true, loading: false }));
+  }
+
   render() {
-    const {
-      username,
-      onLoginChange,
-      buttonDisabled,
-      buttonClick,
-    } = this.props;
+    const { name, userLogged, loading } = this.state;
+    const minValueSize = 3;
+    if (userLogged) {
+      return (
+        <Redirect to="/search" />
+      );
+    }
     return (
       <div data-testid="page-login">
-        Login
-        <form>
-          <label htmlFor="login-name-input">
-            Username:
-            <input
-              value={ username }
-              type="text"
-              data-testid="login-name-input"
-              placeholder="name"
-              onChange={ onLoginChange }
-            />
-          </label>
-          <button
-            type="submit"
-            data-testid="login-submit-button"
-            disabled={ buttonDisabled }
-            onClick={ buttonClick }
-          >
-            Entrar
-          </button>
-        </form>
+        {loading
+          ? <span>Carregando...</span>
+          : (
+            <div>
+              Login
+              <input
+                value={ name }
+                type="text"
+                data-testid="login-name-input"
+                onChange={ this.handleChange }
+              />
+              <button
+                disabled={ name.length < minValueSize }
+                type="submit"
+                data-testid="login-submit-button"
+                onClick={ this.signIn }
+              >
+                Entrar
+              </button>
+            </div>
+          )}
       </div>
     );
   }
 }
 
-Login.propTypes = {
-  username: propTypes.string,
-  onLoginChange: propTypes.func,
-  buttonDisabled: propTypes.bool,
-  buttonClick: propTypes.func,
-}.isRequired;
+export default Login;
