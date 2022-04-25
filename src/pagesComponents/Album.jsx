@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
+import MusicPlayerCard from '../components/MusicPlayerCard';
 
 export default class Album extends Component {
   constructor(props) {
@@ -33,6 +34,10 @@ export default class Album extends Component {
               <img src={ arrayMusics[0].artworkUrl100 } alt="album" />
             </div>
           )}
+        {requestEnded
+          && arrayMusics.slice(1).map((music, musicNumber) => (
+            <MusicPlayerCard music={ music } key={ musicNumber } />
+          ))}
       </div>
     );
   }
