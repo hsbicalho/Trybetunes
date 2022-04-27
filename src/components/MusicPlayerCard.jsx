@@ -16,17 +16,14 @@ export default class MusicPlayerCard extends Component {
     this.fetchFavorites();
   }
 
-  handleChange = async ({ target: { checked } }) => {
+  handleChange = ({ target: { checked } }) => {
     const { music, onChange } = this.props;
-    console.log();
     this.setState({ loading: true });
 
     if (checked) {
-      await addSong(music);
-      this.setState({ loading: false });
+      addSong(music).then(() => this.setState({ loading: false }));
     } else {
-      await removeSong(music);
-      this.setState({ loading: false });
+      removeSong(music).then(() => this.setState({ loading: false }));
     }
     this.fetchFavorites();
     onChange();
@@ -38,13 +35,13 @@ export default class MusicPlayerCard extends Component {
   }
 
   render() {
-    const { music: { Url, musicName, trackId } } = this.props;
+    const { music: { previewUrl, trackName, trackId } } = this.props;
     const { loading, favorites } = this.state;
 
     return (
       <div>
-        <p>{musicName}</p>
-        <audio data-testid="audio-component" src={ Url } controls>
+        <p>{trackName}</p>
+        <audio data-testid="audio-component" src={ previewUrl } controls>
           <track kind="captions" />
           O seu navegador não suporta o elemento
           {' '}
@@ -74,8 +71,8 @@ export default class MusicPlayerCard extends Component {
 
 MusicPlayerCard.propTypes = {
   music: PropTypes.shape({
-    musicName: PropTypes.string.isRequired,
-    Url: PropTypes.string.isRequired,
+    trackName: PropTypes.string.isRequired,
+    previewUrl: PropTypes.string.isRequired,
     trackId: PropTypes.number.isRequired,
   }).isRequired,
   onChange: PropTypes.func,
