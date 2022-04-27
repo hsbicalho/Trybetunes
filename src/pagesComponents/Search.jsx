@@ -15,17 +15,15 @@ export default class Search extends Component {
     };
   }
 
-  seachAlbums = () => {
+  seachAlbums = async () => {
     const { artist } = this.state;
     this.setState({ loading: true, name: '' });
-    searchAlbumsAPI(artist)
-      .then((data) => {
-        this.setState({
-          loading: false,
-          searchComplete: true,
-          albums: data,
-        });
-      });
+    const artistFound = await searchAlbumsAPI(artist);
+    this.setState({
+      loading: false,
+      searchComplete: true,
+      albums: artistFound,
+    });
   }
 
   handleChange = ({ target: { value } }) => {
