@@ -16,37 +16,41 @@ export default class MusicPlayerCard extends Component {
     this.fetchFavorites();
   }
 
-  handleChange = ({ target: { checked } }) => {
+  handleChange = async ({ target: { checked } }) => {
     const { music, onChange } = this.props;
     console.log();
     this.setState({ loading: true });
 
     if (checked) {
-      addSong(music).then(() => this.setState({ loading: false }));
+      await addSong(music);
+      this.setState({ loading: false });
     } else {
-      removeSong(music).then(() => this.setState({ loading: false }));
+      await removeSong(music);
+      this.setState({ loading: false });
     }
     this.fetchFavorites();
     onChange();
   };
 
-  fetchFavorites = () => {
-    getFavoriteSongs()
-      .then((data) => this.setState({ favorites: data }));
+  fetchFavorites = async () => {
+    const fetchFavorites = await getFavoriteSongs();
+    this.setState({ favorites: fetchFavorites });
   }
 
   render() {
-    const { music: { previewUrl, trackName, trackId } } = this.props;
+    const { music: { Url, musicName, trackId } } = this.props;
     const { loading, favorites } = this.state;
 
     return (
       <div>
-        <p>{trackName}</p>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
+        <p>{musicName}</p>
+        <audio data-testid="audio-component" src={ Url } controls>
           <track kind="captions" />
           O seu navegador não suporta o elemento
           {' '}
-          <code>audio</code>
+          <code>
+            audio
+          </code>
           .
         </audio>
         {loading
@@ -70,8 +74,8 @@ export default class MusicPlayerCard extends Component {
 
 MusicPlayerCard.propTypes = {
   music: PropTypes.shape({
-    trackName: PropTypes.string.isRequired,
-    previewUrl: PropTypes.string.isRequired,
+    musicName: PropTypes.string.isRequired,
+    Url: PropTypes.string.isRequired,
     trackId: PropTypes.number.isRequired,
   }).isRequired,
   onChange: PropTypes.func,
